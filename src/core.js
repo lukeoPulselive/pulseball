@@ -1,7 +1,7 @@
 import {List, Map, fromJS} from 'immutable';
 
-export function setRankings(state, entries) {
-	return state.set('rankings', fromJS(entries));
+export function setRankings(state, rankings) {
+	return state.set('rankings', fromJS(rankings));
 }
 
 export function addMatch(state, match) {
@@ -9,33 +9,61 @@ export function addMatch(state, match) {
 	// convert to immutablejs data to make it easier to work with data.
 	match = fromJS(match);
 
+	console.log(typeof match);
+
 	// Only add the match if the match is complete.
 	if (match.get('status') !== 'C') {
 		return state;
 	}
 
-	const team1 = findTeamRanking(state, match.get('teams').first().get('id'));
-	const team2 = findTeamRanking(state, match.get('teams').last().get('id'));
+	const team1 =  match.get('teams').first();
+	const team2 =  match.get('teams').last();
+
+	let team1Ranking = findTeamRanking(state, team1.get('id'));
+	let team2Ranking = findTeamRanking(state, team2.get('id'));
+
+	// Create rankings for the teams if they do not exist in the table already
+	if (!team1Ranking) {
+		state = addTeam(state, team1);
+		team1Ranking = findTeamRanking(state, team1.get('id'));
+	}
+	if (!team2Ranking) {
+		state = addTeam(state, team2);
+		team2Ranking = findTeamRanking(state, team2.get('id'));
+	}
 
 	// add three points to home team
-	let team1Points = team1.get('pts');
-	if (match.get('venue').get('country') === team1.get('team').get('name')) {
+	let team1Points = team1Ranking.get('pts');
+	if (match.get('venue').get('country') === team1Ranking.get('team').get('name')) {
 		team1Points += 3;
 	}
 
-	let team2Points = team2.get('pts');
-	if (match.get('venue').get('country') === team2.get('team').get('name')) {
+	let team2Points = team2Ranking.get('pts');
+	if (match.get('venue').get('country') === team2Ranking.get('team').get('name')) {
 		team2Points += 3;
 	}
 
 	const ratingDifference = getRatingDifference(team1Points, team2Points);
 	const [team1PointsChange, team2PointsChange] = calculatePoints(match.get('outcome'), ratingDifference);
 
-	state =	addPointsToTeam(state, team1.get('team').get('id'), team1PointsChange);
-	state =	addPointsToTeam(state, team2.get('team').get('id'), team2PointsChange);
+	state =	addPointsToTeam(state, team1Ranking.get('team').get('id'), team1PointsChange);
+	state =	addPointsToTeam(state, team2Ranking.get('team').get('id'), team2PointsChange);
 
 	return state;
 
+}
+
+export function addTeam(state, team) {
+	const rankings = state.get('rankings', List());
+	const lastPlace = rankings.size + 1;
+	const ranking = Map({
+		team: team.delete('abbreviation'),
+		pts: 0,
+		pos: lastPlace
+	});
+
+	const nextRankings = rankings.push(ranking);
+	return state.set('rankings', nextRankings);
 }
 
 export function calculatePoints(outcome, ratingDifference) {
@@ -103,7 +131,13 @@ export function getRatingDifference(team1Points, team2Points) {
 
 export function findTeamRanking(state, id) {
 
-	const ranking =  state.get('rankings').find((ranking) => {
+	const rankings = state.get('rankings');
+
+	if (!rankings) {
+		return null;
+	}
+
+	const ranking =  rankings.find((ranking) => {
 		return (ranking.get('team').get('id') === id);
 	});
 

@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {List, Map} from 'immutable';
 
-import {setRankings, addMatch, findTeamRanking, getRatingDifference, addPointsToTeam, sortRankings, calculatePoints, updatePositions} from '../src/core';
+import {setRankings, addMatch, addTeam, findTeamRanking, getRatingDifference, addPointsToTeam, sortRankings, calculatePoints, updatePositions} from '../src/core';
 
 describe('pulseball', () => {
 
@@ -119,8 +119,8 @@ describe('pulseball', () => {
 			});
 
 			const id = 2;
-			const team = findTeamRanking(state, id);
-			expect(team).to.equal(Map({
+			const foundTeam = findTeamRanking(state, id);
+			expect(foundTeam).to.equal(Map({
 						"team": Map({ "name": "France", "id": 2 }),
 	 					 "pos": 2,
 	 					 "pts": -1.3
@@ -128,7 +128,8 @@ describe('pulseball', () => {
 		});
 
 
-		it('returns null when a team does not exist in the rankings table', () => {
+
+		it('return null when a team does not exist in the rankings table', () => {
 			const state = Map({
 				rankings: List.of(
 					Map({
@@ -145,8 +146,8 @@ describe('pulseball', () => {
 			});
 
 			const id = 3;
-			const team = findTeamRanking(state, id);
-			expect(team).to.equal(null);
+			const foundTeam = findTeamRanking(state, id);
+			expect(foundTeam).to.equal(null);
 		});
 
 	});
@@ -417,6 +418,78 @@ describe('pulseball', () => {
 					)
 				})
 			);
+
+		});
+
+	});
+
+	describe('addTeam', () => {
+
+		it ('adds a team to the rankings if it does not exist', () => {
+
+			const state = Map({
+				rankings: List.of(
+					Map({
+						"team": Map({ "name": "France", "id": 2 }),
+	 					 "pos": 1,
+	 					 "pts": 5
+					}),
+					Map({
+						"team": Map({ "name": "England", "id": 1 }),
+	 					 "pos": 2,
+	 					 "pts": 3
+					})
+				)
+			});
+
+			const team = Map({
+				"id": 3,
+				"name": "Spain",
+				"abbreviation": "SPA"
+			});
+
+			const nextState = addTeam(state, team);
+			expect(nextState).to.equal(Map({
+				rankings: List.of(
+					Map({
+						"team": Map({ "name": "France", "id": 2 }),
+	 					 "pos": 1,
+	 					 "pts": 5
+					}),
+					Map({
+						"team": Map({ "name": "England", "id": 1 }),
+	 					 "pos": 2,
+	 					 "pts": 3
+					}),
+					Map({
+						"team": Map({ "name": "Spain", "id": 3 }),
+	 					 "pos": 3,
+	 					 "pts": 0
+					})
+				)
+			}));
+
+		});
+
+		it('creates the rankings if they do not exist', () => {
+
+			const state = Map();
+			const team = Map({
+				"id": 3,
+				"name": "Spain",
+				"abbreviation": "SPA"
+			});
+			const nextState = addTeam(state, team);
+			expect(nextState).to.equal(Map({
+				rankings: List.of(
+					Map({
+						"team": Map({ "name": "Spain", "id": 3 }),
+	 					 "pos": 1,
+	 					 "pts": 0
+					})
+				)
+			}));
+
 
 		});
 
