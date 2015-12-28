@@ -548,7 +548,7 @@ describe('pulseball', () => {
 		});
 
 
-		it ('doesn\'t add a match if it is a no result', () => {
+		it ('doesn\'t add a match if it is a No Result', () => {
 			const state = Map({
 				rankings: List.of(
 					Map({
@@ -594,7 +594,7 @@ describe('pulseball', () => {
 			};
 
 			const nextState = addMatch(state, match);
-			expect(nextState).to.equal(state);
+			expect(nextState.get('rankings')).to.equal(state.get('rankings'));
 
 		});
 
@@ -645,8 +645,7 @@ describe('pulseball', () => {
 			};	
 
 			const nextState = addMatch(state, match);
-			expect(nextState).to.equal(Map({
-				rankings: List.of(
+			expect(nextState.get('rankings')).to.equal(List.of(
 					Map({
 						"team": Map({ "name": "England", "id": 1 }),
 	 					 "pos": 1,
@@ -658,8 +657,89 @@ describe('pulseball', () => {
 	 					 "pts": 51.59
 					})
 				)
-			}));
+			);
 
+		});
+
+		it('adds a match to the matches list', () => {
+			const state = Map({
+				rankings: List.of(
+					Map({
+						"team": Map({ "name": "France", "id": 2 }),
+	 					 "pos": 1,
+	 					 "pts": 52.95
+					}),
+					Map({
+						"team": Map({ "name": "England", "id": 1 }),
+	 					 "pos": 2,
+	 					 "pts": 52.32
+					})
+				)
+			});
+
+			const match = {
+				"matchId": 2524,
+				"description": "Match 2",
+				"venue": {
+					"id": 900,
+					"name": "Stadium",
+					"city": "Paris",
+					"country": "France"
+				},
+				"teams": [
+					{
+						"id": 2,
+						"name": "France",
+						"abbreviation": "FRA"
+					},
+					{
+						"id": 1,
+						"name": "England",
+						"abbreviation": "ENG"
+					}
+				],
+				"scores": [
+					19,
+					23
+				],
+				"status": "C",
+				"outcome": "B"
+			};	
+
+			const nextState = addMatch(state, match);
+
+			expect(nextState.get('matches')).to.equal(
+				List([
+					Map({
+						"matchId": 2524,
+						"description": "Match 2",
+						"venue": Map({
+							"id": 900,
+							"name": "Stadium",
+							"city": "Paris",
+							"country": "France"
+						}),
+						"teams": List([
+							Map({
+								"id": 2,
+								"name": "France",
+								"abbreviation": "FRA"
+							}),
+							Map({
+								"id": 1,
+								"name": "England",
+								"abbreviation": "ENG"
+							})
+						]),
+						"scores": List([
+							19,
+							23
+						]),
+						"status": "C",
+						"outcome": "B"
+					})
+				])
+			);
 		});
 
 		it('adds a team 1 win to the rankings table', () => {
@@ -721,7 +801,35 @@ describe('pulseball', () => {
 	 					 "pos": 2,
 	 					 "pts": 51.68
 					})
-				)
+				),
+				matches: List([Map({
+					"matchId": 2524,
+					"description": "Match 2",
+					"venue": Map({
+						"id": 900,
+						"name": "Stadium",
+						"city": "Paris",
+						"country": "France"
+					}),
+					"teams": List([
+						Map({
+							"id": 2,
+							"name": "France",
+							"abbreviation": "FRA"
+						}),
+						Map({
+							"id": 1,
+							"name": "England",
+							"abbreviation": "ENG"
+						})
+					]),
+					"scores": List([
+						30,
+						8
+					]),
+					"status": "C",
+					"outcome": "A"
+				})])
 			}));
 
 		});
@@ -766,8 +874,8 @@ describe('pulseball', () => {
 			};	
 
 			const nextState = addMatch(state, match);
-			expect(nextState).to.equal(Map({
-				rankings: List.of(
+			expect(nextState.get('rankings')).to.equal(
+				List.of(
 					Map({
 						"team": Map({ "name": "Australia", "id": 32 }),
 	 					 "pos": 1,
@@ -794,7 +902,7 @@ describe('pulseball', () => {
 	 					 "pts": 43.50
 					})
 				)
-			}));
+			);
 
 		});
 

@@ -151,12 +151,12 @@ describe('reducer', () => {
 	    };
 
 	    const nextState = reducer(initialState, action);
-	    expect(nextState).to.equal(fromJS({
-	    	rankings: [
+	    expect(nextState.get('rankings')).to.equal(fromJS(
+	    	[
 				{ "team": { "name": "England", "id": 1 }, "pos": 1, "pts": 1.3 },
 	    		{ "team": { "name": "France", "id": 2 }, "pos": 2, "pts": -1.3 },
 	    	]
-	    }));
+	    ));
 
 	});
 

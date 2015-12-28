@@ -6,22 +6,10 @@ import reducer from './reducer';
 import {PulseballRankingsPredictorContainer} from './components/PulseballRankingsPredictor';
 
 const store = createStore(reducer);
+// Initialise store with empty rankings, and empty list of matches
 store.dispatch({
 	type: 'SET_STATE',
-	state: {
-				rankings: [
-					{ 
-						team: {name: "France", "id": 2},
-						pos: 1,
-						pts: 53.59
-					},
-					{ 
-						team: {name: "England", "id": 1},
-						pos: 2,
-						pts: 51.68
-					}
-				]
-	    	}
+	state: {rankings: [], matches: []}
 });
 
 ReactDOM.render(
