@@ -16,9 +16,9 @@ export default React.createClass({
 	render: function() {
 
 		return (
-			<form onSubmit={this._addMatch}>
-				<textarea/>
-				<button type="submit">Add Match</button>
+			<form className="addMatch" onSubmit={this._addMatch}>
+				<textarea className="addMatch--input" />
+				<button className="addMatch--button" type="submit">Add Match</button>
 			</form>
 		);
 	}

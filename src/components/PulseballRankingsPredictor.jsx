@@ -15,10 +15,12 @@ export const PulseballRankingsPredictor = React.createClass({
 	render: function() {
 
 		return (
-			<div>
-				<h1>Pulseball Rankings Predictor</h1>
-				<RankingsTable rankings={this.props.rankings} />
-				<Matches matches={this.props.matches} />
+			<div className="pulseball">
+				<h1 className="pageHeading">Pulseball Rankings Predictor</h1>
+				<div className="data">
+					<RankingsTable rankings={this.props.rankings} />
+					<Matches matches={this.props.matches} />
+				</div>
 				<AddMatch {...this.props} />
 			</div>	
 		);

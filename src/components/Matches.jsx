@@ -29,18 +29,18 @@ export default React.createClass({
 				const team2 = result.get('teams').get(1);
 				const score = result.get('scores');
 				matches.push(
-					<p key={result.get('matchId')}>{team1.get('abbreviation')} {score.get(0)} - {score.get(1)} {team2.get('abbreviation')}</p>
+					<p key={result.get('matchId')}>{team1.get('abbreviation')} {score.get(0)} - {score.get(1)} {team2.get('abbreviation')} ({result.get('status')})</p>
 				);
 			});
 
 			if (this.state.expandResults) {
 				matches.push(
-					<a onClick={this._toggleExpand} key="expandResults">Show less...</a>
+					<a className="results--expand" onClick={this._toggleExpand} key="expandResults">Show less...</a>
 				);
 
 			} else if (this.props.matches.size > NUM_RESULTS) {
 				matches.push(
-					<a onClick={this._toggleExpand} key="expandResults">Show all...</a>
+					<a className="results--expand" onClick={this._toggleExpand} key="expandResults">Show all...</a>
 				);	
 			}
 
@@ -50,7 +50,7 @@ export default React.createClass({
 		}
 
 		return (
-			<div>
+			<div className="results">
 				<h2>Results</h2>
 				{matches}
 			</div>

@@ -5,6 +5,8 @@ import {Provider} from 'react-redux';
 import reducer from './reducer';
 import {PulseballRankingsPredictorContainer} from './components/PulseballRankingsPredictor';
 
+import '../styles/main.less'
+
 const store = createStore(reducer);
 // Initialise store with empty rankings, and empty list of matches
 store.dispatch({
