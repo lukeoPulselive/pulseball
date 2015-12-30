@@ -2,7 +2,7 @@
 
 A rankings predictor for the fictional game of Pulseball.
 
-*Usage Guidelines*
+**Usage Guidelines**
 
 * Clone repo
 * `npm install` to install all dependencies
