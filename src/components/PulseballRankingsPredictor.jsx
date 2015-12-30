@@ -21,7 +21,7 @@ export const PulseballRankingsPredictor = React.createClass({
 					<RankingsTable rankings={this.props.rankings} />
 					<Matches matches={this.props.matches} />
 				</div>
-				<AddMatch {...this.props} />
+				<AddMatch requiresInit={this.props.rankings.size === 0} {...this.props} />
 			</div>	
 		);
 	}

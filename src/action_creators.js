@@ -11,3 +11,10 @@ export function setState(state) {
 		state
 	};
 }
+
+export function setRankings(rankings) {
+	return {
+		type: 'SET_RANKINGS',
+		rankings
+	};
+}
