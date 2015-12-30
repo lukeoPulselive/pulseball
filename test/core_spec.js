@@ -497,7 +497,7 @@ describe('pulseball', () => {
 
 	describe('addMatch', () => {
 
-		it ('doesn\'t add a match if it is not complete', () => {
+		it ('doesn\'t add a match to rankings if it is not complete', () => {
 			const state = Map({
 				rankings: List.of(
 					Map({
@@ -543,7 +543,7 @@ describe('pulseball', () => {
 			};
 
 			const nextState = addMatch(state, match);
-			expect(nextState).to.equal(state);
+			expect(nextState.get('rankings')).to.equal(state.get('rankings'));
 
 		});
 
@@ -740,6 +740,196 @@ describe('pulseball', () => {
 					})
 				])
 			);
+		});
+
+		it('updates an existing match if the ID already exists', () => {
+			const state = Map({
+				rankings: List.of(
+					Map({
+						"team": Map({ "name": "France", "id": 2 }),
+	 					 "pos": 1,
+	 					 "pts": 52.95
+					}),
+					Map({
+						"team": Map({ "name": "England", "id": 1 }),
+	 					 "pos": 2,
+	 					 "pts": 52.32
+					})
+				),
+				matches: List([
+					Map({
+						"matchId": 2524,
+						"description": "Match 2",
+						"venue": Map({
+							"id": 900,
+							"name": "Stadium",
+							"city": "Paris",
+							"country": "France"
+						}),
+						"teams": List([
+							Map({
+								"id": 2,
+								"name": "France",
+								"abbreviation": "FRA"
+							}),
+							Map({
+								"id": 1,
+								"name": "England",
+								"abbreviation": "ENG"
+							})
+						]),
+						"scores": List([
+							5,
+							10
+						]),
+						"status": "L",
+						"outcome": "B"
+					})
+				])
+			});
+
+			const match = {
+				"matchId": 2524,
+				"description": "Match 2",
+				"venue": {
+					"id": 900,
+					"name": "Stadium",
+					"city": "Paris",
+					"country": "France"
+				},
+				"teams": [
+					{
+						"id": 2,
+						"name": "France",
+						"abbreviation": "FRA"
+					},
+					{
+						"id": 1,
+						"name": "England",
+						"abbreviation": "ENG"
+					}
+				],
+				"scores": [
+					19,
+					23
+				],
+				"status": "C",
+				"outcome": "B"
+			};	
+
+			const nextState = addMatch(state, match);
+
+			expect(nextState.get('matches')).to.equal(
+				List([
+					Map({
+						"matchId": 2524,
+						"description": "Match 2",
+						"venue": Map({
+							"id": 900,
+							"name": "Stadium",
+							"city": "Paris",
+							"country": "France"
+						}),
+						"teams": List([
+							Map({
+								"id": 2,
+								"name": "France",
+								"abbreviation": "FRA"
+							}),
+							Map({
+								"id": 1,
+								"name": "England",
+								"abbreviation": "ENG"
+							})
+						]),
+						"scores": List([
+							19,
+							23
+						]),
+						"status": "C",
+						"outcome": "B"
+					})
+				])
+			);
+		});
+
+		it('does not add a match to the rankings more than once', () => {
+			const state = Map({
+				rankings: List.of(
+					Map({
+						"team": Map({ "name": "France", "id": 2 }),
+	 					 "pos": 1,
+	 					 "pts": 52.95
+					}),
+					Map({
+						"team": Map({ "name": "England", "id": 1 }),
+	 					 "pos": 2,
+	 					 "pts": 52.32
+					})
+				),
+				matches: List([
+					Map({
+						"matchId": 2524,
+						"description": "Match 2",
+						"venue": Map({
+							"id": 900,
+							"name": "Stadium",
+							"city": "Paris",
+							"country": "France"
+						}),
+						"teams": List([
+							Map({
+								"id": 2,
+								"name": "France",
+								"abbreviation": "FRA"
+							}),
+							Map({
+								"id": 1,
+								"name": "England",
+								"abbreviation": "ENG"
+							})
+						]),
+						"scores": List([
+							19,
+							23
+						]),
+						"status": "C",
+						"outcome": "B"
+					})
+				])
+			});
+
+			const match = {
+				"matchId": 2524,
+				"description": "Match 2",
+				"venue": {
+					"id": 900,
+					"name": "Stadium",
+					"city": "Paris",
+					"country": "France"
+				},
+				"teams": [
+					{
+						"id": 2,
+						"name": "France",
+						"abbreviation": "FRA"
+					},
+					{
+						"id": 1,
+						"name": "England",
+						"abbreviation": "ENG"
+					}
+				],
+				"scores": [
+					19,
+					23
+				],
+				"status": "C",
+				"outcome": "B"
+			};	
+
+			const nextState = addMatch(state, match);
+			expect(nextState).to.equal(state);
 		});
 
 		it('adds a team 1 win to the rankings table', () => {

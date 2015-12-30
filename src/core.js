@@ -6,11 +6,28 @@ export function setRankings(state, rankings) {
 
 export function addMatch(state, match) {
 
+	let matchAlreadyRecorded = false;
+	
 	// convert to immutablejs data to make it easier to work with data.
 	match = fromJS(match);
 
-	// Only add the match if the match is complete.
-	if (match.get('status') !== 'C') {
+	// Add the match to the list of matches
+	state = state.update('matches', List(), (matches) => {
+		const existingMatch = matches.findEntry((value, key) => { 
+			return value.get('matchId') === match.get('matchId');
+		});
+
+		if (existingMatch) {
+			// Check if this match is already completed, therefore has already been recorded.
+			matchAlreadyRecorded = existingMatch[1].get('status') === 'C';
+			return matches.set(existingMatch[0], match);
+		} else {
+			return matches.push(match);
+		}
+	});
+
+	// Only add the match to rankings table if the match is complete.
+	if (match.get('status') !== 'C' || matchAlreadyRecorded) {
 		return state;
 	}
 
@@ -46,10 +63,6 @@ export function addMatch(state, match) {
 
 	state =	addPointsToTeam(state, team1Ranking.get('team').get('id'), team1PointsChange);
 	state =	addPointsToTeam(state, team2Ranking.get('team').get('id'), team2PointsChange);
-
-	state = state.update('matches', List(), (matches) => {
-		return matches.push(match);
-	});
 
 	return state;
 
