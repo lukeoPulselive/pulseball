@@ -7,7 +7,7 @@ export function setRankings(state, rankings) {
 export function addMatch(state, match) {
 
 	let matchAlreadyRecorded = false;
-	
+
 	// convert to immutablejs data to make it easier to work with data.
 	match = fromJS(match);
 
@@ -164,3 +164,20 @@ export function findTeamRanking(state, id) {
 
 }
 
+var PULSEBALL = {
+
+	state: null,
+
+	init: function(rankingsJson) {
+		this.state = setRankings(Map(), rankingsJson);
+		console.log(this.state.toJSON());
+	},
+
+	addMatch: function(match) {
+		this.state= addMatch(this.state, match);
+		console.log(this.state.toJSON());
+	}
+
+};
+
+window.PULSEBALL = PULSEBALL;
